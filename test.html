@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Parser Test</title>
+    <style>
+      body {
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 20px;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .content-display {
+        border: 1px solid #ddd;
+        padding: 15px;
+        background-color: #fafafa;
+        border-radius: 4px;
+        min-height: 300px;
+        position: relative;
+      }
+
+      .content-before {
+        opacity: 1;
+      }
+
+      .content-after {
+        opacity: 0.5;
+      }
+
+      .controls {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+      }
+
+      .info {
+        margin: 10px 0;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .key-hint {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+
+      #parsedContent {
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Content Parser Test</h1>
+
+      <div class="key-hint">
+        <strong>操作提示：</strong>按空格键增加索引值，实时更新页面渲染
+      </div>
+
+      <div class="controls">
+        <div class="info">
+          <strong>当前索引：</strong><span id="currentIndex">0</span>
+          <strong>总长度：</strong><span id="totalLength">0</span>
+        </div>
+        <div class="info">
+          <strong>已解析内容：</strong><span id="parsedContent">无</span>
+        </div>
+      </div>
+
+      <div class="content-display" id="contentDisplay"></div>
+    </div>
+
+    <script type="module">
+      // 导入parse模块
+      import { Parser } from "./src/app/translate/parse.mjs";
+
+      // 声明content变量表示一段长文本，包含换行符等空白字符
+      const content = `[sentence]
+en: Hey there Aubrey. How's it going today?
+zh: 嘿，Aubrey。今天过得怎么样？
+
+[sentence]
+en: I am. Excellent. Lindsay, I have a question for you.
+zh: 我很好，太棒了。Lindsay，我有个问题想问你。
+
+[sentence]
+en: Sure. Have you read up on anything interesting lately?
+zh: 当然。你最近有读到什么有趣的东西吗？
+
+[keyword]
+word: read up on
+explanation: 通过阅读来研究或了解某个主题
+usage_en: I need to read up on the latest AI developments.
+usage_zh: 我需要研读关于人工智能最新发展的资料
+
+[sentence]
+en: That's a good question because my first thought is I, you know, I started a new book, but that doesn't really answer the question you're asking me.
+zh: 这是个好问题，因为我第一反应是，嗯，我开始读一本新书，但这并没有真正回答你问我的问题。
+
+[sentence]
+en: Have you read up on anything and Yeah. So this couldn't be like reading a novel, right?
+zh: 你有研读过什么吗？是的，所以这不像是读小说对吧？
+
+[sentence]
+en: No, no. It doesn't really answer the question. So yeah, I'm always reading up on the news, Aubrey keeping, keeping up to date on what's happening.
+zh: 不，不。这并没有真正回答问题。所以我总是在关注新闻，Aubrey，随时了解时事动态。
+
+[sentence]
+en: Okay, nice. Perfect. I started reading, I know there's this kind of trendy popular theory.
+zh: 好的，不错。完美。我开始阅读，我知道有个很流行的理论。
+
+[sentence]
+en: Mel Robbins wrote this book, the Let Them Theory and my brother was really excited about it.
+zh: Mel Robbins写了这本《Let Them Theory》，我哥哥对此非常兴奋。
+
+[sentence]
+en: So I started reading up on that theory and sort of anything related.
+zh: 于是我开始研读这个理论以及相关的内容。
+
+[sentence]
+en: So yeah, I've been reading up on the Let Them Theory. Interesting. Had you heard of it, Lindsay?
+zh: 所以是的，我一直在研读《Let Them Theory》。有意思。Lindsay你听说过吗？
+
+[sentence]
+en: Interesting. I've heard of it, but I don't know what it is.
+zh: 有趣。我听说过，但不知道具体内容。
+
+[sentence]
+en: Real quick. What is it sort of of just like instead of trying to change people's minds or control, just let them, right. Whatever they're gonna do.
+zh: 简单来说，就是与其试图改变别人的想法或控制他们，不如放手让他们做自己想做的事，对吧。
+
+[sentence]
+en: Yeah, let them do it. Don't let it affect your attitude or your happiness.
+zh: 是的，让他们去做。不要让它影响你的态度或快乐。
+
+[sentence]
+en: Right. But it definitely goes into it more because you know, sometimes you, and there's also like, let me, okay, okay, I'll let you.
+zh: 对。但它肯定有更深入的内容，因为你知道，有时候你...还有像是，让我...好吧，我会让你...
+
+[sentence]
+en: But also I need to let me do things that will help me reach my goals righting.
+zh: 但同时我也需要让自己做有助于实现目标的事情。
+
+[sentence]
+en: Got it. All right. Interesting. I'll have to check. I'll have to read up on that.
+zh: 明白了。好的。有意思。我得去看看。我得去研读一下。
+
+[sentence]
+en: Aubrey, I'll have to read up. There you go. Something to read up on.
+zh: Aubrey，我得去研读一下。就是这样。有些东西值得研读。
+
+[sentence]
+en: This is interesting. This phrase came up. We had a great question and we're sharing some related phrases.
+zh: 这很有趣。出现了这个短语。我们有个很棒的问题，正在分享一些相关短语。
+
+[sentence]
+en: Do you wanna read the today's question for us?
+zh: 你想为我们读一下今天的问题吗？
+
+[sentence]
+en: Yes. This question came in from Yge Kirk K and Yge says the other day, while I was talking to a friend from the US I mentioned that I had to study a lot that night and didn't have much time.
+zh: 好的。这个问题来自Yge Kirk K，Yge说前几天我和一个美国朋友聊天时提到，我那晚必须大量学习，时间不多。
+
+[sentence]
+en: She replied, so you'll hit the books, which I find quite funny and interesting.
+zh: 她回答说：'所以你要猛攻书本了'，我觉得这很有趣。
+
+[keyword]
+word: hit the books
+explanation: 俚语，指开始努力学习，特别是为了考试
+usage_en: I need to hit the books for my final exams.
+usage_zh: 我需要为期末考试猛攻书本了
+
+[sentence]
+en: It's a phrase I hadn't heard before. That's why I thought this might be an idea for your podcast.
+zh: 这是我以前没听过的短语。所以我觉得这可能适合你们的播客。
+
+[sentence]
+en: By the way, I recently discovered your podcast and I really enjoy listening to it.
+zh: 顺便说，我最近发现了你们的播客，真的很喜欢听。
+
+[sentence]
+en: Oh, that's great to know, Aubrey, isn't it?
+zh: 哦，知道这个太好了，Aubrey，对吧？
+
+[sentence]
+en: Yes. Awesome. And I can totally see why this would seem like a really funny expression, right?
+zh: 是的，太棒了。我完全理解为什么这会显得很有趣，对吧？
+
+[sentence]
+en: 'cause usually a hit is like a punch or maybe you hit something with your car.
+zh: 因为通常'hit'像是击打，或者用车撞到什么东西。
+
+[sentence]
+en: So it seems weird that there's this idiom hit the book. So you imagine someone literally, yeah, hitting a book.
+zh: 所以有'hit the books'这个习语很奇怪，你会想象有人真的在击打书本。
+
+[sentence]
+en: It does seem that's not what it means. Totally agree. It's very strange. It's totally counterintuitive.
+zh: 看起来确实不是这个意思。完全同意。这很奇怪，完全违反直觉。
+
+[sentence]
+en: And we'll get into it today. But first guys, go ahead and hit this follow button. Hit that follow button.
+zh: 我们今天会深入探讨。但首先大家，去点击关注按钮吧。点击那个关注按钮。
+
+[sentence]
+en: If you just found the show, maybe your friend recommended it to you. Make sure you're following the show so you get new episodes five days a week.
+zh: 如果你刚发现这个节目，可能是朋友推荐的。确保关注节目，这样你每周五天都能收到新内容。
+
+[sentence]
+en: Okay. And I see what you did there. Hit the follow button, like you hit the books.
+zh: 好的。我明白你的用意了。'点击关注按钮'，就像'猛攻书本'一样。
+
+[sentence]
+en: It's funny, I often use hit when we don't really mean to hit anything. Very interesting. Good stuff.
+zh: 有趣的是，我经常用'hit'这个词，但我们并不是真的要击打什么。很有意思。不错。
+
+[sentence]
+en: So yeah, let's talk about this phrase. Aubrey hit the books. Yeah. What does it mean first?
+zh: 那么，我们来谈谈这个短语。Aubrey，'hit the books'。是的。首先它是什么意思？
+
+[sentence]
+en: Yeah, it means studying. It's very specific to schoolwork, right?
+zh: 是的，意思是学习。它特指学业，对吧？
+
+[sentence]
+en: If you are in classes, college, high school, and you have to study for an exam, you would say, I'm gonna hit the books.
+zh: 如果你在上课，大学，高中，需要为考试学习，你会说：'我要猛攻书本了'。
+
+[sentence]
+en: If you're studying for the bar, right? For big exams, all that type of test, that's when we would say, I'm gonna hit the books.
+zh: 如果你在为律师资格考试学习，对吧？或者各种大型考试，这时候我们会说：'我要猛攻书本了'。
+
+[sentence]
+en: If you just need to study a lot. Yeah. Okay, good stuff. I need to hit the books. I have an exam tomorrow, for example.
+zh: 如果你需要大量学习。是的。好的，不错。比如：'我需要猛攻书本了，明天有考试'。
+
+[sentence]
+en: Or again, he can't come to dinner. He's hitting the books tonight.
+zh: 或者：'他不能来吃晚饭，他今晚要猛攻书本'。
+
+[sentence]
+en: Yeah, but what's interesting, yeah, he is not literally hitting a book. It means he is studying. It's a funny way to say it. It's a very idiomatic.
+zh: 是的，但有趣的是，他不是真的在击打书本。意思是他正在学习。这是一种有趣的说法，非常习语化。
+
+[sentence]
+en: Exactly. But it's interesting to think about, you know, would you ever say this about work?
+zh: 没错。但有意思的是，你会把这个短语用在工作中吗？
+
+[sentence]
+en: Maybe if you had to read a lot of manuals or read some instructions, would you say, I'm gonna hit the books?
+zh: 也许如果你需要阅读大量手册或说明，你会说'我要猛攻书本了'吗？
+
+[sentence]
+en: It's a good question. You really wouldn't, this is especially reserved for being a student in school.
+zh: 这是个好问题。实际上不会，这个短语特别保留给在校学生使用。
+
+[sentence]
+en: Even if you are professional and you do study things, you, it's just, it just means you're in school. Hit the books. Exactly. Yeah.
+zh: 即使你是专业人士并且需要学习，这个短语还是特指你在学校的情况。'猛攻书本'。没错。是的。
+
+<continue>`;
+
+      // index表示content中的索引，将content分为前后两部分
+      let index = 0;
+      let parser = new Parser();
+      let lastParsedIndex = 0;
+
+      // 获取DOM元素
+      const contentDisplay = document.getElementById("contentDisplay");
+      const currentIndexSpan = document.getElementById("currentIndex");
+      const totalLengthSpan = document.getElementById("totalLength");
+      const parsedContentSpan = document.getElementById("parsedContent");
+
+      // 初始化页面
+      function init() {
+        totalLengthSpan.textContent = content.length;
+        updateDisplay();
+      }
+
+      // 更新页面渲染
+      function updateDisplay() {
+        const beforeContent = content.substring(0, index);
+        const afterContent = content.substring(index);
+
+        contentDisplay.innerHTML = `
+                <span class="content-before">${escapeHtml(beforeContent)}</span>
+                <span class="content-after">${escapeHtml(afterContent)}</span>
+            `;
+
+        currentIndexSpan.textContent = index;
+      }
+
+      // HTML转义函数
+      function escapeHtml(text) {
+        return text.replace(/\n/g, "<br />");
+      }
+
+      // 解析新增内容
+      function parseNewContent() {
+        if (index > lastParsedIndex) {
+          const newContent = content.substring(lastParsedIndex, index);
+          parser.append(newContent);
+          lastParsedIndex = index;
+
+          // 显示解析结果
+          const result = parser.get();
+          parsedContentSpan.textContent = JSON.stringify(result, null, 2);
+
+          // 在控制台输出详细解析结果
+          console.log("解析结果:", result);
+        }
+      }
+
+      // 键盘事件监听
+      document.addEventListener("keydown", function (event) {
+        if (event.code === "Space") {
+          event.preventDefault(); // 阻止页面滚动
+
+          // 键盘空格键增加index值
+          if (index < content.length) {
+            index++;
+            updateDisplay();
+            parseNewContent();
+          }
+        }
+      });
+
+      // 初始化页面
+      init();
+    </script>
+  </body>
+</html>

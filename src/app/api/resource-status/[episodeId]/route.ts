@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decompress } from "../../../utils/vendor-CxthA9A1.js";
+import { decompress } from "../../../utils/vendor-CxthA9A1.mjs";
 import { customTolerantParseJSON } from "../../../utils/parse.js";
 import fs from "fs-extra";
 import path from "path";

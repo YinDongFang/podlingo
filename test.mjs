@@ -1,8 +1,8 @@
-import { decompress } from "./src/app/utils/vendor-CxthA9A1.js";
+import { decompress } from "./src/app/utils/vendor-CxthA9A1.mjs";
 import fs from "fs-extra";
 import path from "path";
 import dotenv from "dotenv";
-import { translate } from "./src/app/translate/translate.js";
+import { translate } from "./src/app/translate/translate.mjs";
 
 if (!process.env.NETLIFY) {
   dotenv.config();
@@ -24,16 +24,13 @@ async function fetchTranscript(episodeId) {
 
     console.log(`🔁 Downloading transcript for episode ${episodeId}`);
     const transcriptId = metadata.transcription.id;
-    const { text } = await downloadTranscript(episodeId, transcriptId);
-
-    console.log(`🔁 Processing transcript for episode ${episodeId}`);
-    const transcript = processTranscript(text);
+    const transcript = await downloadTranscript(episodeId, transcriptId);
     fs.writeJsonSync(path.join(dir, "transcript.json"), transcript);
 
     console.log(`🔁 Translating transcript for episode ${episodeId}`);
-    // 分片翻译，每500句翻译一次
-    const sentences = transcript.map((sentence) => sentence.text);
-    const translatedSentences = await translate(sentences, 100, dir);
+    const content = transcript.text.map(({ word }) => word).join(" ");
+    fs.writeFileSync(path.join(dir, "transcript.txt"), content);
+    const translatedSentences = await translate(content, dir);
     // 将翻译结果与原始句子合并
     const finalTranscript = transcript.map((originalSentence, index) => {
       const translatedSentence = translatedSentences[index];
