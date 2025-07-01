@@ -1,0 +1,349 @@
+```yaml
+- en: "I've got some serious cramming to do."
+  zh: "我得狠狠突击学习一下了。"
+  keyword:
+    - word: "cramming"
+      explanation: "俚语，指考试前突击学习，临时抱佛脚"
+      usages:
+        - en: "I had to cram all night for the chemistry exam."
+          zh: "我不得不通宵突击化学考试"
+
+- en: "What are you writing your thesis on?"
+  zh: "你的论文写什么主题？"
+
+- en: "Gender identity."
+  zh: "性别认同。"
+
+- en: "I've been studying up on how much one's gender affects their sense of self."
+  zh: "我一直在深入研究性别如何影响人的自我认知。"
+  keyword:
+    - word: "studying up on"
+      explanation: "短语，指系统性地深入研究某个主题"
+      usages:
+        - en: "I need to study up on the new tax laws."
+          zh: "我需要深入研究新税法"
+
+- en: "Interesting."
+  zh: "有意思。"
+
+- en: "There's definitely something that's definitely something I'd like to read up on."
+  zh: "这绝对是我想要深入了解的内容。"
+
+- en: "Can I read your paper when it's finished?"
+  zh: "你论文写完能给我看看吗？"
+
+- en: "Absolutely."
+  zh: "当然可以。"
+
+- en: "Nice, nice, nice."
+  zh: "很好，很好，很好。"
+
+- en: "So I definitely had to make us students here so that we could use hitting the books."
+  zh: "所以我必须确认我们都是学生身份，才能用'埋头苦读'这个说法。"
+  keyword:
+    - word: "hitting the books"
+      explanation: "俚语，指刻苦学习，尤指在校学生"
+      usages:
+        - en: "I'll be hitting the books all weekend for finals."
+          zh: "我要整个周末都埋头准备期末考试"
+
+- en: "Oh, yep."
+  zh: "哦，对。"
+
+- en: "Exa."
+  zh: "正是。"
+
+- en: "And that proves it."
+  zh: "这就证明了。"
+
+- en: "Right?"
+  zh: "对吧？"
+
+- en: "It just doesn't apply unless you're a student in a, in a program."
+  zh: "除非你是某个项目的学生，否则不能用这个说法。"
+
+- en: "Exactly."
+  zh: "没错。"
+
+- en: "So you started us out by saying a few of us are hitting the books at a study session tonight."
+  zh: "你开场说我们几个今晚要开学习会埋头苦读。"
+
+- en: "So you were inviting me just meaning we're going to study together."
+  zh: "所以你邀请我的意思就是我们要一起学习。"
+
+- en: "And then you said thanks, I might take you up on that."
+  zh: "然后你说谢谢，可能会接受邀请。"
+
+- en: "I've got some serious cramming to do."
+  zh: "我得狠狠突击学习一下了。"
+
+- en: "So you need to jam all this information into your head."
+  zh: "所以你需要把这些知识硬塞进脑子里。"
+  keyword:
+    - word: "jam"
+      explanation: "口语化用法，指强行塞入"
+      usages:
+        - en: "I jammed all my clothes into the suitcase."
+          zh: "我把所有衣服都塞进了行李箱"
+
+- en: "Exactly."
+  zh: "正是。"
+
+- en: "I'm probably have been procrastinating."
+  zh: "我可能一直在拖延。"
+  keyword:
+    - word: "procrastinating"
+      explanation: "指拖延症，推迟做某事"
+      usages:
+        - en: "Stop procrastinating and start your homework."
+          zh: "别拖延了，开始写作业吧"
+
+- en: "I'm not like, I'm good, I'm ready."
+  zh: "我不是说我已经准备好了。"
+
+- en: "I've been studying."
+  zh: "我一直在学习。"
+
+- en: "No, I've got some cramming to do."
+  zh: "不，我还得突击学习。"
+
+- en: "Oh my God."
+  zh: "天啊。"
+
+- en: "Did you used to get nervous, Aubrey, for tests before you would take them in school?"
+  zh: "Aubrey，你以前考试前会紧张吗？"
+
+- en: "Absolutely, yes."
+  zh: "当然会啊。"
+
+- en: "I remember the most nervous I ever was."
+  zh: "我记得最紧张的一次。"
+
+- en: "Someone told me they had taken the class before and they said, if you're confident with your grade, this teacher doesn't make you take the final."
+  zh: "有人上过这门课，说如果你对成绩满意，这个老师就不让你参加期末考试。"
+
+- en: "He says, go you."
+  zh: "他说，你可以走了。"
+
+- en: "You know you, you don't have to take it."
+  zh: "你知道的，你不用考了。"
+
+- en: "So I didn't study at all and I went the last day."
+  zh: "所以我完全没复习，最后一天去了。"
+
+- en: "But I was like, what if that student was wrong?"
+  zh: "但我想，万一那个学生搞错了呢？"
+
+- en: "And I find out I have to take the final."
+  zh: "结果发现我得参加期末考试。"
+
+- en: "I hadn't studied at all, but then he was right."
+  zh: "我完全没准备，但他说对了。"
+
+- en: "He was like, if you're happy, thank your grade."
+  zh: "他说，如果你满意，感谢你的成绩吧。"
+
+- en: "You don't have to take it."
+  zh: "你不用考了。"
+
+- en: "I saved all that time."
+  zh: "我节省了所有时间。"
+
+- en: "I was so happy."
+  zh: "我开心极了。"
+
+- en: "Oh my gosh."
+  zh: "天哪。"
+
+- en: "Rumors, right?"
+  zh: "传言对吧？"
+
+- en: "Good thing."
+  zh: "幸好。"
+
+- en: "It was true."
+  zh: "是真的。"
+
+- en: "Good thing it was true."
+  zh: "幸好是真的。"
+
+- en: "I know, right?"
+  zh: "就是啊。"
+
+- en: "'cause I, I risked it there."
+  zh: "因为我当时冒险了。"
+
+- en: "It was kind of a gamble."
+  zh: "有点像赌博。"
+  keyword:
+    - word: "gamble"
+      explanation: "比喻有风险的行为"
+      usages:
+        - en: "Starting a business is always a gamble."
+          zh: "创业总是有风险的"
+
+- en: "It was risky."
+  zh: "很冒险。"
+
+- en: "Yeah."
+  zh: "是啊。"
+
+- en: "Gamble."
+  zh: "赌一把。"
+
+- en: "All right."
+  zh: "好吧。"
+
+- en: "What did you say next?"
+  zh: "你接着说了什么？"
+
+- en: "Aubrey?"
+  zh: "Aubrey？"
+
+- en: "All right, so then you were asking what I'm writing my thesis on and I, let's see, you said that's definitely something I'd like to read up on."
+  zh: "好的，然后你问我论文写什么，我说...你说这绝对是你想深入了解的内容。"
+
+- en: "So, oh, the before that you said I've, I said I've been studying up on how much one's gender affects their sense of self."
+  zh: "哦之前我说我一直在研究性别如何影响自我认知。"
+
+- en: "So this is interesting."
+  zh: "所以这很有趣。"
+
+- en: "It is."
+  zh: "确实。"
+
+- en: "There is a little bit of a nuance here."
+  zh: "这里有点细微差别。"
+  keyword:
+    - word: "nuance"
+      explanation: "指细微差别"
+      usages:
+        - en: "There's a nuance in meaning between these two words."
+          zh: "这两个词在意义上有细微差别"
+
+- en: "Yeah."
+  zh: "对。"
+
+- en: "This imp applies that I am really researching."
+  zh: "这说明我是在真正做研究。"
+
+- en: "I'm studying, I'm looking at studies, case studies maybe."
+  zh: "我在研究，查阅各种研究资料，可能是案例研究。"
+
+- en: "Right."
+  zh: "对。"
+
+- en: "I'm diving into the material more to understand something rather than just reading articles for example."
+  zh: "我是深入钻研材料来理解某事，而不仅仅是读文章。"
+  keyword:
+    - word: "diving into"
+      explanation: "比喻深入钻研"
+      usages:
+        - en: "She's diving deep into the research data."
+          zh: "她正在深入研究数据"
+
+- en: "Yeah."
+  zh: "是啊。"
+
+- en: "It's kind of like when you write a paper, like you write a master's thesis or a PhD, you do a literature review, right."
+  zh: "就像写硕士或博士论文时要做文献综述那样。"
+
+- en: "You have to do that whole process where you review what's already been written."
+  zh: "你需要回顾所有已有文献。"
+
+- en: "That would be a context to use setting up on."
+  zh: "这就是'studying up on'的使用场景。"
+
+- en: "Exactly."
+  zh: "正是。"
+
+- en: "Right."
+  zh: "对。"
+
+- en: "Right."
+  zh: "没错。"
+
+- en: "You might even be creating studies, surveys and having to get input that way."
+  zh: "你可能还要设计研究、调查问卷来获取数据。"
+
+- en: "Right."
+  zh: "对。"
+
+- en: "Whereas read up on is what you said next."
+  zh: "而'read up on'是你接下来用的说法。"
+
+- en: "And that would just mean more like, I would like to read a lot about that."
+  zh: "这个更多是指我想大量阅读相关内容。"
+
+- en: "You said."
+  zh: "你说。"
+
+- en: "That's definitely something I'd like to read up on."
+  zh: "这绝对是我想要阅读了解的内容。"
+
+- en: "All right."
+  zh: "好的。"
+
+- en: "Excellent."
+  zh: "很好。"
+
+- en: "Aubrey, where should we leave our listeners for today's episode?"
+  zh: "Aubrey，今天的节目该在哪里结束呢？"
+
+- en: "I like this theme."
+  zh: "我喜欢这个主题。"
+
+- en: "The theme of these words because it's about staying up to date on things."
+  zh: "这些词汇的主题是关于保持与时俱进。"
+
+- en: "It's about lifelong learning in a sense, isn't it?"
+  zh: "某种意义上也是关于终身学习，对吧？"
+
+- en: "Yes, absolutely."
+  zh: "当然是的。"
+
+- en: "We should all be lifelong learners."
+  zh: "我们都应该终身学习。"
+
+- en: "Right?"
+  zh: "对吧？"
+
+- en: "I know you guys are curious about the world."
+  zh: "我知道你们对世界充满好奇。"
+
+- en: "There's certainly something you are studying up on, reading up on."
+  zh: "肯定有你们正在深入研究或阅读的内容。"
+
+- en: "And I'm also glad to be that really grateful for this question because you could see how this would be confusing."
+  zh: "我也很感谢这个问题，因为你能看出这些表达容易混淆。"
+
+- en: "You might accidentally ask someone at work if they're hitting the books when you know they're, they need to read a lot for a project."
+  zh: "你可能会误问同事是否在'埋头苦读'，而他们其实只是需要为项目阅读大量资料。"
+
+- en: "So it's good to know that that's very specific to studies schooling that you would be enrolled in."
+  zh: "所以知道这个短语特指在校学习很重要。"
+
+- en: "Yeah."
+  zh: "是啊。"
+
+- en: "But keep in mind, if you're a professional and you're in like night school, you could hit the books, right?"
+  zh: "但要记住，如果你是在职人士上夜校，也可以用'埋头苦读'对吧？"
+
+- en: "Absolutely."
+  zh: "当然可以。"
+
+- en: "That's the other piece."
+  zh: "这是另一部分。"
+
+- en: "As long as you're enrolled in a formal academic endeavor, that's the difference with hit the books I think Aubrey."
+  zh: "只要是在正式学术项目中，Aubrey，这就是'hit the books'的区别所在。"
+
+- en: "Yeah."
+  zh: "对。"
+
+- en: "Yes, exactly."
+  zh: "正是如此。"
+
+- en: "And then for everything else, you can study up on it."
+  zh: "其他情况都可以用'study up on'。"
+```
