@@ -11,7 +11,7 @@ export function useResource(episodeId: string) {
   const fetchResource = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/episodes/${episodeId}/resource.json`);
+      const response = await fetch(`/episodes/${episodeId}/manifest.json`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -26,7 +26,9 @@ export function useResource(episodeId: string) {
   };
 
   useEffect(() => {
-    fetchResource();
+    if (episodeId) {
+      fetchResource();
+    }
   }, [episodeId]);
 
   return {

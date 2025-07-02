@@ -6,9 +6,7 @@ import {
   LoadingState,
   ErrorState,
   AudioPlayer,
-  PodcastInfo,
   Transcript,
-  Layout,
 } from "../../components";
 
 interface PageProps {
@@ -38,7 +36,7 @@ export default function EpisodePage({ params }: PageProps) {
 
   // 如果episodeId还未设置，显示加载状态
   if (!episodeId) {
-    return <LoadingState resourceStatus={null} />;
+    return null;
   }
 
   // 如果状态检查出错
@@ -48,7 +46,7 @@ export default function EpisodePage({ params }: PageProps) {
 
   // 如果资源状态检查中或资源正在获取中
   if (statusLoading || isFetching) {
-    return <LoadingState resourceStatus={null} />;
+    return <LoadingState />;
   }
 
   // 如果资源不存在或获取失败
@@ -63,7 +61,7 @@ export default function EpisodePage({ params }: PageProps) {
 
   // 如果资源数据加载中
   if (resourceLoading) {
-    return <LoadingState resourceStatus={null} />;
+    return <LoadingState />;
   }
 
   // 如果资源数据获取失败
@@ -85,20 +83,28 @@ export default function EpisodePage({ params }: PageProps) {
   };
 
   return (
-    <Layout>
-      <PodcastInfo resource={resource} />
-
-      <AudioPlayer
-        audioUrl={resource.audioUrl}
-        onTimeUpdate={handleTimeUpdate}
-        currentTime={currentTime}
+    <div className="absolute inset-0 overflow-hidden">
+      <div
+        className="bg-center bg-cover bg-no-repeat absolute inset-0 blur-3xl"
+        style={{ backgroundImage: `url(${resource.logo})` }}
       />
+      <div
+        className="absolute inset-0"
+        style={{ backdropFilter: "brightness(0.5)" }}
+      >
+        <AudioPlayer
+          audioUrl={resource.url}
+          onTimeUpdate={handleTimeUpdate}
+          currentTime={currentTime}
+          resource={resource}
+        />
 
-      <Transcript
-        sentences={resource.translatedTranscript}
-        currentTime={currentTime}
-        onSentenceClick={handleSentenceClick}
-      />
-    </Layout>
+        <Transcript
+          className="absolute inset-0"
+          sentences={resource.transcript}
+          currentTime={currentTime}
+        />
+      </div>
+    </div>
   );
 }

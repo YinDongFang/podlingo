@@ -12,7 +12,7 @@ export default function PodcastInfo({ resource }: PodcastInfoProps) {
     <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
       <div className="flex items-start space-x-4">
         <img
-          src={resource.logoUrl}
+          src={resource.logo}
           alt="播客封面"
           className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
         />

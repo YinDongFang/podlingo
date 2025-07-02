@@ -1,22 +1,67 @@
-'use client';
+"use client";
 
-import { useRef, useEffect } from 'react';
-import { Sentence } from '../types';
-import { formatTime } from '../utils/helpers';
+import {
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  forwardRef,
+  RefObject,
+} from "react";
+import { Sentence } from "../types";
+import classnames from "classnames";
 
 interface TranscriptProps {
   sentences: Sentence[];
   currentTime: number;
-  onSentenceClick: (time: number) => void;
+  className?: string;
 }
 
-export default function Transcript({ sentences, currentTime, onSentenceClick }: TranscriptProps) {
+const TranscriptSentence = forwardRef<
+  HTMLDivElement,
+  { sentence: Sentence; isCurrent: boolean }
+>((props, ref) => {
+  const { sentence, isCurrent } = props;
+  const [height, setHeight] = useState(0);
+
+  const elementRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+    setHeight(element.clientHeight);
+  }, []);
+
+  return (
+    <div
+      ref={elementRef}
+      style={{ height: height ? (isCurrent ? height * 1.5 : height) : "auto" }}
+      className={classnames(
+        "relative transition-all duration-300 w-[50%] mx-auto",
+        isCurrent ? "opacity-100" : "opacity-40"
+      )}
+    >
+      <div
+        className={classnames(
+          "flex flex-col justify-center gap-y-1 transition-all duration-300",
+          isCurrent && "absolute inset-0 scale-150"
+        )}
+      >
+        <p>{sentence.en}</p>
+        <p>{sentence.zh}</p>
+      </div>
+    </div>
+  );
+});
+
+export default function Transcript(props: TranscriptProps) {
+  const { sentences, currentTime, className } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const currentSentenceRef = useRef<HTMLDivElement>(null);
 
   // 找到当前播放的句子
   const currentSentenceIndex = sentences.findIndex(
-    sentence => currentTime >= sentence.startTime && currentTime <= sentence.endTime
+    (sentence) =>
+      currentTime >= sentence.startTime && currentTime <= sentence.endTime
   );
 
   // 自动滚动到当前句子
@@ -24,74 +69,48 @@ export default function Transcript({ sentences, currentTime, onSentenceClick }: 
     if (currentSentenceRef.current && containerRef.current) {
       const container = containerRef.current;
       const currentElement = currentSentenceRef.current;
-      
+
       const containerRect = container.getBoundingClientRect();
       const elementRect = currentElement.getBoundingClientRect();
-      
-      const isVisible = 
+
+      const isVisible =
         elementRect.top >= containerRect.top &&
         elementRect.bottom <= containerRect.bottom;
-      
+
       if (!isVisible) {
         currentElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
+          behavior: "smooth",
+          block: "center",
         });
       }
     }
   }, [currentSentenceIndex]);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">字幕</h2>
-      <div 
+    <div
+      className={classnames("px-32", className)}
+      style={{
+        maskImage:
+          "linear-gradient(to bottom, transparent 5%, white 20%, white 80%, transparent 95%)",
+      }}
+    >
+      <div
         ref={containerRef}
-        className="max-h-96 overflow-y-auto space-y-3"
+        className="overflow-hidden space-y-5 text-center text-white text-sm"
       >
         {sentences.map((sentence, index) => {
           const isCurrent = index === currentSentenceIndex;
-          const isPast = currentTime > sentence.endTime;
-          
+
           return (
-            <div
+            <TranscriptSentence
               key={index}
               ref={isCurrent ? currentSentenceRef : null}
-              onClick={() => onSentenceClick(sentence.startTime)}
-              className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                isCurrent 
-                  ? 'bg-blue-100 border-l-4 border-blue-500' 
-                  : isPast 
-                    ? 'bg-gray-50' 
-                    : 'bg-white hover:bg-gray-50'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-2">
-                <span className="text-xs text-gray-500 font-mono">
-                  {formatTime(sentence.startTime)} - {formatTime(sentence.endTime)}
-                </span>
-                {isCurrent && (
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <p className={`text-sm leading-relaxed ${
-                  isCurrent ? 'text-gray-900 font-medium' : 'text-gray-700'
-                }`}>
-                  {sentence.text}
-                </p>
-                {sentence.translatedText && (
-                  <p className={`text-sm leading-relaxed ${
-                    isCurrent ? 'text-blue-600' : 'text-gray-500'
-                  }`}>
-                    {sentence.translatedText}
-                  </p>
-                )}
-              </div>
-            </div>
+              sentence={sentence}
+              isCurrent={isCurrent}
+            />
           );
         })}
       </div>
     </div>
   );
-} 
+}

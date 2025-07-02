@@ -9,14 +9,14 @@ export interface Resource {
   title: string;
   description: string;
   duration: number;
-  audioUrl: string;
-  logoUrl: string;
-  translatedTranscript: Sentence[];
+  url: string;
+  logo: string;
+  transcript: Sentence[];
 }
 
 export interface Sentence {
-  text: string;
-  translatedText?: string;
+  en: string;
+  zh?: string;
   startTime: number;
   endTime: number;
 }
