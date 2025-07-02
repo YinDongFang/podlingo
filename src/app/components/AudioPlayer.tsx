@@ -133,12 +133,12 @@ export default function AudioPlayer({
           </button>
           <button
             onClick={togglePlay}
-            className="bg-white/90 hover:bg-white text-yellow-700 rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-colors duration-200 outline-none"
+            className="bg-white/90 hover:bg-white text-yellow-700 rounded-full w-6 h-6 flex items-center justify-center shadow-lg transition-colors duration-200 outline-none"
           >
             {isPlaying ? (
               <svg
-                width="32"
-                height="32"
+                width="16"
+                height="16"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -147,8 +147,8 @@ export default function AudioPlayer({
               </svg>
             ) : (
               <svg
-                width="32"
-                height="32"
+                width="16"
+                height="16"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >

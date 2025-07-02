@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useResourceStatus, useResource } from "../../hooks";
-import {
-  LoadingState,
-  ErrorState,
-  AudioPlayer,
-  Transcript,
-} from "../../components";
+import { useResourceStatus, useResource } from "@/app/hooks";
+import AudioPlayer from "@/app/components/AudioPlayer";
+import ErrorState from "@/app/components/ErrorState";
+import LoadingState from "@/app/components/LoadingState";
+import Transcript from "@/app/components/Transcript";
 
 interface PageProps {
   params: Promise<{ episodeId: string }>;

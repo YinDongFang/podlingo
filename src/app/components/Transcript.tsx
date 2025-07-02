@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useRef,
-  useEffect,
-  useLayoutEffect,
-  useState,
-  forwardRef,
-  RefObject,
-} from "react";
+import { useRef, useEffect } from "react";
 import { Sentence } from "../types";
 import classnames from "classnames";
 
@@ -28,31 +21,21 @@ export default function Transcript(props: TranscriptProps) {
       currentTime >= sentence.startTime && currentTime <= sentence.endTime
   );
 
-  // 自动滚动到当前句子
+  // 自动滚动到当前句子，使其中线和容器中线对齐
   useEffect(() => {
     if (currentSentenceRef.current && containerRef.current) {
       const container = containerRef.current;
-      const currentElement = currentSentenceRef.current;
-
-      const containerRect = container.getBoundingClientRect();
-      const elementRect = currentElement.getBoundingClientRect();
-
-      const isVisible =
-        elementRect.top >= containerRect.top &&
-        elementRect.bottom <= containerRect.bottom;
-
-      if (!isVisible) {
-        currentElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
+      const current = currentSentenceRef.current;
+      // 当前句子中线相对容器顶部的距离
+      const sentenceMiddle = current.offsetTop + current.offsetHeight / 2;
+      // 让scrollTop调整到让当前句子中线和容器中线重合
+      container.style.transform = `translateY(-${sentenceMiddle}px)`;
     }
   }, [currentSentenceIndex]);
 
   return (
     <div
-      className={classnames("px-32", className)}
+      className={classnames("px-32 overflow-hidden", className)}
       style={{
         maskImage:
           "linear-gradient(to bottom, transparent 5%, white 20%, white 80%, transparent 95%)",
@@ -60,7 +43,7 @@ export default function Transcript(props: TranscriptProps) {
     >
       <div
         ref={containerRef}
-        className="space-y-5 text-center text-white w-[80%] mx-auto"
+        className="space-y-5 text-center text-white w-[80%] mx-auto relative top-[50%] transition-all duration-300"
       >
         {sentences.map((sentence, index) => {
           const isCurrent = index === currentSentenceIndex;
