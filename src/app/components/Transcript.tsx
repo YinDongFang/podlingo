@@ -17,42 +17,6 @@ interface TranscriptProps {
   className?: string;
 }
 
-const TranscriptSentence = forwardRef<
-  HTMLDivElement,
-  { sentence: Sentence; isCurrent: boolean }
->((props, ref) => {
-  const { sentence, isCurrent } = props;
-  const [height, setHeight] = useState(0);
-
-  const elementRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const element = elementRef.current;
-    if (!element) return;
-    setHeight(element.clientHeight);
-  }, []);
-
-  return (
-    <div
-      ref={elementRef}
-      style={{ height: height ? (isCurrent ? height * 1.5 : height) : "auto" }}
-      className={classnames(
-        "relative transition-all duration-300 w-[50%] mx-auto",
-        isCurrent ? "opacity-100" : "opacity-40"
-      )}
-    >
-      <div
-        className={classnames(
-          "flex flex-col justify-center gap-y-1 transition-all duration-300",
-          isCurrent && "absolute inset-0 scale-150"
-        )}
-      >
-        <p>{sentence.en}</p>
-        <p>{sentence.zh}</p>
-      </div>
-    </div>
-  );
-});
-
 export default function Transcript(props: TranscriptProps) {
   const { sentences, currentTime, className } = props;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,18 +60,24 @@ export default function Transcript(props: TranscriptProps) {
     >
       <div
         ref={containerRef}
-        className="overflow-hidden space-y-5 text-center text-white text-sm"
+        className="space-y-5 text-center text-white w-[80%] mx-auto"
       >
         {sentences.map((sentence, index) => {
           const isCurrent = index === currentSentenceIndex;
 
           return (
-            <TranscriptSentence
-              key={index}
-              ref={isCurrent ? currentSentenceRef : null}
-              sentence={sentence}
-              isCurrent={isCurrent}
-            />
+            <div
+              ref={isCurrent ? currentSentenceRef : undefined}
+              className={classnames(
+                "relative transition-all duration-300",
+                isCurrent ? "opacity-100 scale-120" : "opacity-40 scale-100"
+              )}
+            >
+              <div className="flex flex-col justify-center gap-y-1 transition-all duration-300">
+                <p>{sentence.en}</p>
+                <p>{sentence.zh}</p>
+              </div>
+            </div>
           );
         })}
       </div>
