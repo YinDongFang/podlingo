@@ -28,14 +28,15 @@ async function fetchTranscript(episodeId) {
     fs.writeJsonSync(path.join(dir, "transcript.json"), transcript);
 
     console.log(`🔁 Translating transcript for episode ${episodeId}`);
-    const content = transcript.text.map(({ word }) => word).join(" ");
+    const content = transcript.text
+      .map(({ word }) => word)
+      .join(" ")
+      .substring(0, 2000);
     fs.writeFileSync(path.join(dir, "transcript.txt"), content);
-    const translatedSentences = await translate(content, dir);
+    const translation = await translate(content);
+
     // 将翻译结果与原始句子合并
-    const finalTranscript = transcript.map((originalSentence, index) => {
-      const translatedSentence = translatedSentences[index];
-      return { ...originalSentence, ...translatedSentence };
-    });
+    const finalTranscript = mergeTranscript(transcript.text, translation);
 
     const manifest = {
       id: episodeId,
@@ -72,44 +73,23 @@ async function downloadTranscript(episodeId, transcriptVersionReqId) {
   return decompress(data);
 }
 
-// 处理字幕文件
-function processTranscript(words) {
-  const sentences = [];
-  let currentSentence = {
-    text: "",
-    startTime: 0,
-    endTime: 0,
-  };
-
-  words.forEach((word, index) => {
-    if (index === 0) {
-      currentSentence.startTime = word.startTime;
+function mergeTranscript(text, translation) {
+  let index = 0;
+  return translation.map((sentence) => {
+    const result = {
+      ...sentence,
+      startTime: text[index].startTime,
+    };
+    let length = sentence.en.length;
+    while (length > 0) {
+      const word = text[index];
+      length -= word.word.length;
+      if (length > 0) length -= 1;
+      index++;
     }
-
-    currentSentence.text += word.word + " ";
-
-    // 判断句子结束条件：句号、问号、感叹号，或者下一个词开始时间间隔超过1秒
-    const isEndOfSentence = word.word.match(/[.!?]$/);
-    const nextWord = words[index + 1];
-    const timeGap = nextWord ? nextWord.startTime - word.endTime : 0;
-
-    if (isEndOfSentence || timeGap > 1 || index === words.length - 1) {
-      currentSentence.endTime = word.endTime;
-      currentSentence.text = currentSentence.text.trim();
-      currentSentence.index = sentences.length;
-      sentences.push(currentSentence);
-
-      if (nextWord) {
-        currentSentence = {
-          text: "",
-          startTime: nextWord.startTime,
-          endTime: 0,
-        };
-      }
-    }
+    result.endTime = text[index - 1].endTime;
+    return result;
   });
-
-  return sentences;
 }
 
 fetchTranscript("135018264");

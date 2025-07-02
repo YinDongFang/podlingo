@@ -36,13 +36,11 @@ const openai = new OpenAI({
 });
 
 export async function translate(input) {
-  const parser = new Parser();
   const statistics = new Statistics(input.length);
-  let content = "";
-  let parsedSentences = [];
+  let result = [];
   let messages = [
     { role: "system", content: prompt },
-    { role: "user", content: input.substring(0, 2000) },
+    { role: "user", content: input },
   ];
 
   while (true) {
@@ -50,7 +48,7 @@ export async function translate(input) {
       {
         model: process.env.LLM_MODEL,
         stream: true,
-        max_tokens: 100,
+        max_tokens: 500,
         thinking: { type: "disabled" },
         messages,
       },
@@ -58,19 +56,23 @@ export async function translate(input) {
     );
 
     let finish_reason;
+    let buffer = [];
+    let response = "";
+    const parser = new Parser();
     for await (const chunk of chatCompletion) {
       const chunkContent = chunk.choices[0].delta.content || "";
       finish_reason = chunk.choices[0].finish_reason;
-      content += chunkContent;
+      response += chunkContent;
+
       parser.append(chunkContent);
-      parsedSentences = parser.get().sentences;
-      const count = parsedSentences
+      buffer = parser.get().sentences;
+      const count = [...result, ...buffer]
         .filter((sentence) => sentence?.en)
         .reduce((count, { en }) => count + en.length + 1, -1);
       statistics.update(Math.max(count, 0));
 
-      if (parsedSentences.length > 0) {
-        const latestSentence = parsedSentences[parsedSentences.length - 1];
+      if (buffer.length > 0) {
+        const latestSentence = buffer[buffer.length - 1];
         if (latestSentence?.zh) {
           append(`📝 "${latestSentence.zh}"`);
           if (latestSentence.keyword?.length > 0)
@@ -79,21 +81,24 @@ export async function translate(input) {
       }
     }
 
-    fs.writeFileSync(`messages-${messages.length / 2}.txt`, content);
-    console.log(finish_reason);
+    fs.writeFileSync(`messages-${messages.length / 2}.txt`, response);
 
     if (finish_reason === "length") {
-      messages.push(
-        { role: "assistant", content: content },
-        { role: "user", content: "继续" }
-      );
-      content = "";
-    } else {
+      result.push(...buffer.slice(0, -1));
+    }
+    if (finish_reason === "stop") {
+      result.push(...buffer);
       break;
     }
+
+    const endIndex = parser.get().lastIndex;
+    messages.push(
+      { role: "assistant", content: response.substring(0, endIndex) },
+      { role: "user", content: "继续" }
+    );
   }
 
   statistics.end();
 
-  return parsedSentences;
+  return result;
 }

@@ -4,11 +4,14 @@ export class Parser {
   pendingToken = "";
   state = "start_of_line";
   property = "";
+  lastIndex = 0;
+  readLength = 0;
 
   constructor() {}
 
-  newKeyword(keyword) {
+  newKeyword(keyword, index) {
     if (keyword === "sentence") {
+      this.lastIndex = index - 9 + this.readLength;
       this.current = {};
       this.sentences.push(this.current);
     } else if (keyword === "keyword") {
@@ -51,7 +54,7 @@ export class Parser {
         if (charCode === 93) {
           this.state = "end_of_line";
           if (this.pendingToken) {
-            this.newKeyword(this.pendingToken);
+            this.newKeyword(this.pendingToken, i);
           }
           this.pendingToken = "";
         } else {
@@ -73,10 +76,11 @@ export class Parser {
       } else if (this.state === "read_value") {
         if (this.pendingToken || charCode !== 32) {
           this.pendingToken += char;
-          this.current[this.property] = this.pendingToken;
+          this.current[this.property] = this.pendingToken.trim();
         }
       }
     }
+    this.readLength += input.length;
   }
 
   get() {
@@ -85,6 +89,8 @@ export class Parser {
       property: this.property,
       pendingToken: this.pendingToken,
       sentences: [...this.sentences],
+      readLength: this.readLength,
+      lastIndex: this.lastIndex,
     };
   }
 }
