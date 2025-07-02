@@ -73,11 +73,7 @@ export default function EpisodePage({ params }: PageProps) {
   }
 
   const handleTimeUpdate = (time: number) => {
-    setCurrentTime(time);
-  };
-
-  const handleSentenceClick = (time: number) => {
-    setCurrentTime(time);
+    setCurrentTime(Math.min(Math.max(time, 0), resource.duration));
   };
 
   return (
@@ -91,7 +87,8 @@ export default function EpisodePage({ params }: PageProps) {
         style={{ backdropFilter: "brightness(0.5)" }}
       >
         <AudioPlayer
-          audioUrl={resource.url}
+          onPrevious={(currentTime) => handleTimeUpdate(currentTime - 10)}
+          onNext={(currentTime) => handleTimeUpdate(currentTime + 10)}
           onTimeUpdate={handleTimeUpdate}
           currentTime={currentTime}
           resource={resource}

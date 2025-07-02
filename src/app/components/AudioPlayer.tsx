@@ -2,19 +2,21 @@
 
 import { useRef, useState, useEffect } from "react";
 import { formatTime } from "../utils/helpers";
+import { Resource } from "../types";
+import classnames from "classnames";
+import { useMemoFn } from "../hooks/useMemoFn";
 
 interface AudioPlayerProps {
+  onPrevious: (currentTime: number) => void;
+  onNext: (currentTime: number) => void;
   onTimeUpdate: (currentTime: number) => void;
   currentTime: number;
-  resource: {
-    logo: string;
-    title: string;
-    artist: string;
-    url: string;
-  };
+  resource: Resource;
 }
 
 export default function AudioPlayer({
+  onPrevious,
+  onNext,
   onTimeUpdate,
   currentTime,
   resource,
@@ -59,7 +61,23 @@ export default function AudioPlayer({
     }
   }, [currentTime]);
 
-  const togglePlay = () => {
+  useEffect(() => {
+    const callback = (e: KeyboardEvent) => {
+      if (e.code === "ArrowLeft") {
+        onPrevious(audioRef.current?.currentTime ?? 0);
+      } else if (e.code === "ArrowRight") {
+        onNext(audioRef.current?.currentTime ?? 0);
+      } else if (e.code === "Space") {
+        togglePlay();
+      }
+    };
+    document.addEventListener("keydown", callback);
+    return () => {
+      document.removeEventListener("keydown", callback);
+    };
+  }, []);
+
+  const togglePlay = useMemoFn(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -69,7 +87,7 @@ export default function AudioPlayer({
       audio.play();
     }
     setIsPlaying(!isPlaying);
-  };
+  });
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
@@ -89,7 +107,10 @@ export default function AudioPlayer({
       <img
         src={resource.logo}
         alt="cover"
-        className="rounded-full shadow-md object-cover"
+        className={classnames(
+          "rounded-full shadow-md object-cover",
+          isPlaying && "animate-spin-slow"
+        )}
       />
       <div className="flex flex-col items-stretch flex-1 min-w-0">
         <div className="text-white font-semibold drop-shadow-sm overflow-ellipsis text-nowrap w-full overflow-hidden shrink-0">
@@ -126,14 +147,17 @@ export default function AudioPlayer({
         </div>
         {/* 控制按钮 */}
         <div className="flex items-center justify-center space-x-8">
-          <button className="outline-none">
+          <button
+            onClick={() => onPrevious(audioRef.current?.currentTime ?? 0)}
+            className="outline-none cursor-pointer"
+          >
             <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
               <path d="M6 17V7M18 17L10.5 12L18 7V17Z" />
             </svg>
           </button>
           <button
             onClick={togglePlay}
-            className="bg-white/90 hover:bg-white text-yellow-700 rounded-full w-6 h-6 flex items-center justify-center shadow-lg transition-colors duration-200 outline-none"
+            className="bg-white text-yellow-700 rounded-full w-6 h-6 flex items-center justify-center shadow-lg outline-none cursor-pointer"
           >
             {isPlaying ? (
               <svg
@@ -156,7 +180,10 @@ export default function AudioPlayer({
               </svg>
             )}
           </button>
-          <button className="outline-none">
+          <button
+            onClick={() => onNext(audioRef.current?.currentTime ?? 0)}
+            className="outline-none cursor-pointer"
+          >
             <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
               <path d="M18 7V17M6 7L13.5 12L6 17V7Z" />
             </svg>

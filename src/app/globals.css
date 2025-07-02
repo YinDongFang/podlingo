@@ -24,3 +24,10 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.animate-spin-slow {
+  animation: spin 15s linear infinite;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
