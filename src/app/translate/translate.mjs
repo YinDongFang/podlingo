@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { Portkey } from "portkey-ai";
 import dotenv from "dotenv";
 import { append } from "./output.mjs";
 import { Statistics } from "./statistics.mjs";
@@ -30,9 +31,14 @@ explanation: 同义的、同义词的。指不同词语可以互相替换而不�
 usage_en: "Happy" and "joyful" are often considered synonymous.
 usage_zh: “快乐的”和“愉快的”通常被认为是同义的。`;
 
-const openai = new OpenAI({
-  apiKey: process.env.API_KEY,
-  baseURL: process.env.BASE_URL,
+// const openai = new OpenAI({
+//   apiKey: process.env.API_KEY,
+//   baseURL: process.env.BASE_URL,
+// });
+
+const portkey = new Portkey({
+  apiKey: process.env.PORTKEY_API_KEY,
+  virtualKey: process.env.PORTKEY_VIRTUAL_KEY,
 });
 
 export async function translate(input) {
@@ -44,16 +50,22 @@ export async function translate(input) {
   ];
 
   while (true) {
-    const chatCompletion = await openai.chat.completions.create(
-      {
-        model: process.env.LLM_MODEL,
-        stream: true,
-        max_tokens: 500,
-        thinking: { type: "disabled" },
-        messages,
-      },
-      { headers: { "cf-aig-authorization": process.env.CLOUDFLARE_TOKEN } }
-    );
+    // const chatCompletion = await openai.chat.completions.create(
+    //   {
+    //     model: process.env.LLM_MODEL,
+    //     stream: true,
+    //     max_tokens: 500,
+    //     thinking: { type: "disabled" },
+    //     messages,
+    //   },
+    //   { headers: { "cf-aig-authorization": process.env.CLOUDFLARE_TOKEN } }
+    // );
+
+    const chatCompletion = await portkey.chat.completions.create({
+      stream: true,
+      messages,
+      model: process.env.LLM_MODEL,
+    });
 
     let finish_reason;
     let buffer = [];
@@ -80,8 +92,6 @@ export async function translate(input) {
         }
       }
     }
-
-    fs.writeFileSync(`messages-${messages.length / 2}.txt`, response);
 
     if (finish_reason === "length") {
       result.push(...buffer.slice(0, -1));

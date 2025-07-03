@@ -14,7 +14,7 @@ export class Statistics {
 
     clear();
 
-    const progress = Math.round((count / this.total) * 100);
+    const progress = Math.min(Math.round((count / this.total) * 100), 100);
     const elapsedTime = (Date.now() - this.startTime) / 1000;
     const speed = (count / elapsedTime).toFixed(1);
     const progressBar =
