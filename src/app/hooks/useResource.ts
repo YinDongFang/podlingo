@@ -1,40 +1,49 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Resource } from '../types';
+import { useState, useEffect, useRef } from "react";
+import { ResourceStatus } from "../types";
 
 export function useResource(episodeId: string) {
-  const [resource, setResource] = useState<Resource | null>(null);
+  const [status, setStatus] = useState<ResourceStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const fetchResource = async () => {
+  const checkResourceStatus = async () => {
     try {
-      setIsLoading(true);
-      const response = await fetch(`/episodes/${episodeId}/manifest.json`);
+      const response = await fetch(`/api/resource-status/${episodeId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setResource(data);
+      setStatus(data);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '获取资源数据时发生错误');
+      setError(err instanceof Error ? err.message : "检查资源状态时发生错误");
+      stopAutoRefresh();
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
+  };
+
+  const autoRefreshRef = useRef<any>(undefined);
+  const startAutoRefresh = () => {
+    checkResourceStatus();
+    autoRefreshRef.current = setInterval(checkResourceStatus, 3000);
+  };
+  const stopAutoRefresh = () => {
+    clearInterval(autoRefreshRef.current);
   };
 
   useEffect(() => {
-    if (episodeId) {
-      fetchResource();
-    }
-  }, [episodeId]);
+    startAutoRefresh();
+    return stopAutoRefresh;
+  }, []);
 
-  return {
-    resource,
-    error,
-    isLoading,
-    refetch: fetchResource
-  };
-} 
+  useEffect(() => {
+    if (status?.status === "completed" || status?.status !== "failed") {
+      stopAutoRefresh();
+    }
+  }, [status?.status]);
+
+  return { status, error, loading, refetch: startAutoRefresh };
+}

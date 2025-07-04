@@ -1,77 +1,44 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useResourceStatus, useResource } from "@/app/hooks";
+import { useResource } from "@/app/hooks/useResource";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import ErrorState from "@/app/components/ErrorState";
 import LoadingState from "@/app/components/LoadingState";
 import Transcript from "@/app/components/Transcript";
 
-interface PageProps {
-  params: Promise<{ episodeId: string }>;
+export default function Entry({ params }: any) {
+  const [episodeId, setEpisodeId] = useState<string>("");
+
+  useEffect(() => {
+    params.then(({ episodeId }: any) => setEpisodeId(episodeId));
+  }, [params]);
+
+  if (!episodeId) return null;
+
+  return <EpisodePage episodeId={episodeId} />;
 }
 
-export default function EpisodePage({ params }: PageProps) {
-  const [episodeId, setEpisodeId] = useState<string>("");
+function EpisodePage({ episodeId }: { episodeId: string }) {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  // 获取episodeId
-  useEffect(() => {
-    params.then(({ episodeId }) => setEpisodeId(episodeId));
-  }, [params]);
-
-  const {
-    isFetching,
-    error: statusError,
-    isLoading: statusLoading,
-    refetch: refetchStatus,
-  } = useResourceStatus(episodeId);
-  const {
-    resource,
-    error: resourceError,
-    isLoading: resourceLoading,
-  } = useResource(episodeId);
-
-  // 如果episodeId还未设置，显示加载状态
-  if (!episodeId) {
-    return null;
-  }
+  const { status, error, loading, refetch } = useResource(episodeId);
 
   // 如果状态检查出错
-  if (statusError) {
-    return <ErrorState error={statusError} onRetry={refetchStatus} />;
+  if (error) {
+    return <ErrorState error={error} onRetry={refetch} />;
   }
 
   // 如果资源状态检查中或资源正在获取中
-  if (statusLoading || isFetching) {
+  if (
+    loading ||
+    (status?.status !== "completed" && status?.status !== "failed")
+  ) {
     return <LoadingState />;
   }
 
-  // 如果资源不存在或获取失败
-  if (resourceError || !resource) {
-    return (
-      <ErrorState
-        error={resourceError || "资源不存在"}
-        onRetry={refetchStatus}
-      />
-    );
-  }
-
-  // 如果资源数据加载中
-  if (resourceLoading) {
-    return <LoadingState />;
-  }
-
-  // 如果资源数据获取失败
-  if (resourceError || !resource) {
-    return (
-      <ErrorState
-        error={resourceError || "无法加载资源数据"}
-        onRetry={() => window.location.reload()}
-      />
-    );
-  }
+  const resource = status.data!;
 
   const handleTimeUpdate = (time: number) => {
     setCurrentTime(Math.min(Math.max(time, 0), duration));

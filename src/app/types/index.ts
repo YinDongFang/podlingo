@@ -8,7 +8,6 @@ export interface Resource {
   id: string;
   title: string;
   description: string;
-  duration: number;
   url: string;
   logo: string;
   transcript: Sentence[];
@@ -16,7 +15,13 @@ export interface Resource {
 
 export interface Sentence {
   en: string;
-  zh?: string;
+  zh: string;
+  keyword: {
+    word: string;
+    explanation: string;
+    en: string;
+    zh: string;
+  }[];
   startTime: number;
   endTime: number;
 }
