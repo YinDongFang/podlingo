@@ -74,7 +74,12 @@ export default function AudioPlayer({
         onToStart();
       } else if (e.code === "ArrowRight") {
         onToEnd();
+      } else if (e.code === "ArrowUp") {
+        onPrevious();
+      } else if (e.code === "ArrowDown") {
+        onNext();
       } else if (e.code === "Space") {
+        e.preventDefault();
         togglePlay();
       }
     };
@@ -82,7 +87,7 @@ export default function AudioPlayer({
     return () => {
       document.removeEventListener("keydown", callback);
     };
-  }, []);
+  }, [onPrevious, onNext, onToStart, onToEnd]);
 
   const togglePlay = useMemoFn(() => {
     const audio = audioRef.current;
@@ -153,15 +158,22 @@ export default function AudioPlayer({
           </span>
         </div>
         {/* 控制按钮 */}
-        <div className="flex items-center justify-center space-x-8">
-          <button onClick={onToStart} className="outline-none cursor-pointer">
-            <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
-              <path d="M6 17V7M18 17L10.5 12L18 7V17Z" />
+        <div className="flex items-center justify-center gap-x-4">
+          <button onClick={onPrevious} className="outline-none cursor-pointer" title="上一句 (↑)">
+            <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+              <path d="M19 20L9 12L19 4V20Z" />
+              <path d="M5 19V5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            </svg>
+          </button>
+          <button onClick={onToStart} className="outline-none cursor-pointer" title="到句首 (←)">
+            <svg width="26" height="26" fill="white" viewBox="0 0 24 24">
+              <path d="M19 20L9 12L19 4V20Z" />
             </svg>
           </button>
           <button
             onClick={togglePlay}
             className="bg-white text-yellow-700 rounded-full w-6 h-6 flex items-center justify-center shadow-lg outline-none cursor-pointer"
+            title="播放/暂停 (空格)"
           >
             {isPlaying ? (
               <svg
@@ -184,9 +196,15 @@ export default function AudioPlayer({
               </svg>
             )}
           </button>
-          <button onClick={onToEnd} className="outline-none cursor-pointer">
-            <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
-              <path d="M18 7V17M6 7L13.5 12L6 17V7Z" />
+          <button onClick={onToEnd} className="outline-none cursor-pointer" title="到句尾 (→)">
+            <svg width="26" height="26" fill="white" viewBox="0 0 24 24">
+              <path d="M5 4L15 12L5 20V4Z" />
+            </svg>
+          </button>
+          <button onClick={onNext} className="outline-none cursor-pointer" title="下一句 (↓)">
+            <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+              <path d="M5 4L15 12L5 20V4Z" />
+              <path d="M19 5V19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
             </svg>
           </button>
         </div>

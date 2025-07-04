@@ -99,6 +99,37 @@ export default function EpisodePage({ params }: PageProps) {
     }
   };
 
+  const handlePrevious = () => {
+    // 找到当前句子的索引
+    const currentSentenceIndex = resource.transcript.findIndex(
+      (sentence) =>
+        currentTime >= sentence.startTime && currentTime <= sentence.endTime
+    );
+    if (currentSentenceIndex < 0) return;
+    const targetSentenceIndex =
+      currentSentenceIndex > 0 ? currentSentenceIndex - 1 : 0;
+    // 如果找到当前句子且不是第一句，跳转到上一句的开始
+    const previousSentence = resource.transcript[targetSentenceIndex];
+    setCurrentTime(previousSentence.startTime);
+  };
+
+  const handleNext = () => {
+    // 找到当前句子的索引
+    const currentSentenceIndex = resource.transcript.findIndex(
+      (sentence) =>
+        currentTime >= sentence.startTime && currentTime <= sentence.endTime
+    );
+    if (currentSentenceIndex < 0) return;
+
+    // 如果找到当前句子且不是最后一句，跳转到下一句的开始
+    const nextSentenceIndex =
+      currentSentenceIndex < resource.transcript.length - 1
+        ? currentSentenceIndex + 1
+        : resource.transcript.length - 1;
+    const nextSentence = resource.transcript[nextSentenceIndex];
+    setCurrentTime(nextSentence.startTime);
+  };
+
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div
@@ -110,6 +141,8 @@ export default function EpisodePage({ params }: PageProps) {
         style={{ backdropFilter: "brightness(0.5)" }}
       >
         <AudioPlayer
+          onPrevious={handlePrevious}
+          onNext={handleNext}
           onToStart={handleToStart}
           onToEnd={handleToEnd}
           onTimeUpdate={handleTimeUpdate}
