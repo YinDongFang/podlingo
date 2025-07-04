@@ -10,7 +10,7 @@ if (!process.env.NETLIFY) {
   dotenv.config();
 }
 
-const prompt = `- 根据语义断句，每句不能太长，也不能太短，逐句翻译给出的文本
+const prompt = `- 根据语义断句，每句最好不超过20个单词，逐句翻译给出的文本
 - 注意判断上下文，避免内容缺失,不要省略口语填充词
 - 不能遗漏每一个单词，返回从第一个单词到最后一个单词的完整翻译，不要省略
 - CET4以上难度的单词、生僻单词、英语俚语、英语口语化短语、专业术语需要给出具体的解释和使用场景
@@ -60,6 +60,7 @@ async function* continueCompletion(input, unitStart) {
         stream: true,
         messages,
         model: process.env.LLM_MODEL,
+        max_tokens: 16384,
       },
       {
         traceId,
