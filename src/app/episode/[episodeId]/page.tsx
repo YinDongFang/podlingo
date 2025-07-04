@@ -13,6 +13,7 @@ interface PageProps {
 
 export default function EpisodePage({ params }: PageProps) {
   const [episodeId, setEpisodeId] = useState<string>("");
+  const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
   // 获取episodeId
@@ -73,7 +74,29 @@ export default function EpisodePage({ params }: PageProps) {
   }
 
   const handleTimeUpdate = (time: number) => {
-    setCurrentTime(Math.min(Math.max(time, 0), resource.duration));
+    setCurrentTime(Math.min(Math.max(time, 0), duration));
+  };
+
+  const handleToStart = () => {
+    // 跳转到当前句子或上一句的开始时间
+    const currentSentence = resource.transcript.find(
+      (sentence) =>
+        currentTime >= sentence.startTime && currentTime <= sentence.endTime
+    );
+    if (currentSentence) {
+      setCurrentTime(currentSentence.startTime);
+    }
+  };
+
+  const handleToEnd = () => {
+    // 跳转到当前句子的结束时间
+    const currentSentence = resource.transcript.find(
+      (sentence) =>
+        currentTime >= sentence.startTime && currentTime <= sentence.endTime
+    );
+    if (currentSentence) {
+      setCurrentTime(currentSentence.endTime);
+    }
   };
 
   return (
@@ -87,9 +110,10 @@ export default function EpisodePage({ params }: PageProps) {
         style={{ backdropFilter: "brightness(0.5)" }}
       >
         <AudioPlayer
-          onPrevious={(currentTime) => handleTimeUpdate(currentTime - 10)}
-          onNext={(currentTime) => handleTimeUpdate(currentTime + 10)}
+          onToStart={handleToStart}
+          onToEnd={handleToEnd}
           onTimeUpdate={handleTimeUpdate}
+          onDurationUpdate={setDuration}
           currentTime={currentTime}
           resource={resource}
         />

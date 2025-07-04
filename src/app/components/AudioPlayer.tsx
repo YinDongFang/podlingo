@@ -7,9 +7,12 @@ import classnames from "classnames";
 import { useMemoFn } from "../hooks/useMemoFn";
 
 interface AudioPlayerProps {
-  onPrevious: (currentTime: number) => void;
-  onNext: (currentTime: number) => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  onToStart: () => void;
+  onToEnd: () => void;
   onTimeUpdate: (currentTime: number) => void;
+  onDurationUpdate: (duration: number) => void;
   currentTime: number;
   resource: Resource;
 }
@@ -17,7 +20,10 @@ interface AudioPlayerProps {
 export default function AudioPlayer({
   onPrevious,
   onNext,
+  onToStart,
+  onToEnd,
   onTimeUpdate,
+  onDurationUpdate,
   currentTime,
   resource,
 }: AudioPlayerProps) {
@@ -31,6 +37,7 @@ export default function AudioPlayer({
 
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
+      onDurationUpdate(audio.duration);
     };
 
     const handleTimeUpdate = () => {
@@ -64,9 +71,9 @@ export default function AudioPlayer({
   useEffect(() => {
     const callback = (e: KeyboardEvent) => {
       if (e.code === "ArrowLeft") {
-        onPrevious(audioRef.current?.currentTime ?? 0);
+        onToStart();
       } else if (e.code === "ArrowRight") {
-        onNext(audioRef.current?.currentTime ?? 0);
+        onToEnd();
       } else if (e.code === "Space") {
         togglePlay();
       }
@@ -147,10 +154,7 @@ export default function AudioPlayer({
         </div>
         {/* 控制按钮 */}
         <div className="flex items-center justify-center space-x-8">
-          <button
-            onClick={() => onPrevious(audioRef.current?.currentTime ?? 0)}
-            className="outline-none cursor-pointer"
-          >
+          <button onClick={onToStart} className="outline-none cursor-pointer">
             <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
               <path d="M6 17V7M18 17L10.5 12L18 7V17Z" />
             </svg>
@@ -180,10 +184,7 @@ export default function AudioPlayer({
               </svg>
             )}
           </button>
-          <button
-            onClick={() => onNext(audioRef.current?.currentTime ?? 0)}
-            className="outline-none cursor-pointer"
-          >
+          <button onClick={onToEnd} className="outline-none cursor-pointer">
             <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
               <path d="M18 7V17M6 7L13.5 12L6 17V7Z" />
             </svg>

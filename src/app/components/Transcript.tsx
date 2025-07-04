@@ -50,6 +50,7 @@ export default function Transcript(props: TranscriptProps) {
 
           return (
             <div
+              key={sentence.en}
               ref={isCurrent ? currentSentenceRef : undefined}
               className={classnames(
                 "relative transition-all duration-300",
