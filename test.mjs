@@ -28,10 +28,7 @@ async function fetchTranscript(episodeId) {
     fs.writeJsonSync(path.join(dir, "transcript.json"), transcript);
 
     console.log(`🔁 Translating transcript for episode ${episodeId}`);
-    const content = transcript.text
-      .map(({ word }) => word)
-      .join(" ")
-      .substring(0, 2000);
+    const content = transcript.text.map(({ word }) => word).join(" ");
     fs.writeFileSync(path.join(dir, "transcript.txt"), content);
     const translation = await translate(content);
 
