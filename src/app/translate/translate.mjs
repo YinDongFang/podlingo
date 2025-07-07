@@ -1,18 +1,13 @@
-import OpenAI from "openai";
 import { Portkey } from "portkey-ai";
-import dotenv from "dotenv";
 import { append } from "./output.mjs";
 import { Statistics } from "./statistics.mjs";
 import { load } from "js-yaml";
 import { v4 as uuidv4 } from "uuid";
 
-if (!process.env.NETLIFY) {
-  dotenv.config();
-}
-
-const prompt = `- 根据语义断句，每句最好不超过20个单词，逐句翻译给出的文本
-- 注意判断上下文，避免内容缺失,不要省略口语填充词
-- 不能遗漏每一个单词，返回从第一个单词到最后一个单词的完整翻译，不要省略
+const prompt = `## Goals
+- 根据语义断句，逗号也可以断句，逐句翻译给出的文本，每句一定不能超过20个单词！
+- 注意判断上下文，避免内容缺失，不要省略任何单词
+- 返回的en字段必须和原文保持完全一致，不能缺失任何字母或标点符号
 - CET4以上难度的单词、生僻单词、英语俚语、英语口语化短语、专业术语需要给出具体的解释和使用场景
 ## OutputFormat:
 - 输出标准yaml格式，以双引号表示字符串标量，字符串中是的引号为单引号，如果是双引号，需要添加转义符
@@ -55,6 +50,7 @@ async function* continueCompletion(input, unitStart) {
     spanId++;
     let finish_reason;
     let current_content = "";
+    const spanName = `Translate Chunk ${spanId}`;
     const chatCompletion = await portkey.chat.completions.create(
       {
         stream: true,
@@ -65,7 +61,7 @@ async function* continueCompletion(input, unitStart) {
       {
         traceId,
         spanId,
-        spanName: `Translate Chunk ${spanId}`,
+        spanName,
       }
     );
 
@@ -76,6 +72,11 @@ async function* continueCompletion(input, unitStart) {
 
       yield full_content + current_content;
     }
+
+    console.log(`trace_id: ${traceId}
+span_id: ${spanId}
+span_name: ${spanName}
+finish_reason: ${finish_reason}\n`);
 
     if (finish_reason === "stop") {
       full_content += current_content;

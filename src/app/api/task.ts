@@ -1,10 +1,5 @@
 import { decompress } from "@/app/utils/vendor-CxthA9A1.mjs";
-import dotenv from "dotenv";
 import { translate } from "@/app/translate/translate.mjs";
-
-if (!process.env.NETLIFY) {
-  dotenv.config();
-}
 
 // 资源获取函数
 export async function* fetchTranscript(episodeId: string) {

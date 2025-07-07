@@ -43,6 +43,7 @@ async function startTask(episodeId: string) {
   for await (const status of result) {
     task.set(episodeId, status);
     if (status.status === "completed") {
+      fs.ensureDirSync(dir);
       fs.writeJsonSync(path.join(dir, "manifest.json"), status.data);
       return;
     }
