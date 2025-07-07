@@ -35,7 +35,7 @@ function EpisodePage({ episodeId }: { episodeId: string }) {
     loading ||
     (status?.status !== "completed" && status?.status !== "failed")
   ) {
-    return <LoadingState />;
+    return <LoadingState status={status} />;
   }
 
   const resource = status.data!;

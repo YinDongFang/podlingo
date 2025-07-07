@@ -15,7 +15,9 @@ export async function GET(
   const { episodeId } = await params;
 
   try {
-    if (task.has(episodeId)) return task.get(episodeId);
+    if (task.has(episodeId)) {
+      return NextResponse.json(task.get(episodeId));
+    }
 
     const dir = getDir(episodeId);
     if (fs.existsSync(path.join(dir, "manifest.json"))) {
@@ -37,8 +39,8 @@ export async function GET(
 
 async function startTask(episodeId: string) {
   const dir = getDir(episodeId);
-  const task: any = await fetchTranscript(episodeId);
-  for await (const status of task) {
+  const result: any = await fetchTranscript(episodeId);
+  for await (const status of result) {
     task.set(episodeId, status);
     if (status.status === "completed") {
       fs.writeJsonSync(path.join(dir, "manifest.json"), status.data);

@@ -23,10 +23,14 @@ export async function* fetchTranscript(episodeId: string) {
     console.log(`🔁 Translating transcript for episode ${episodeId}`);
     const content = transcript.text.map(({ word }: any) => word).join(" ");
     const translation = await translate(content);
-    yield { status: "translate" };
+    let translationResult: any;
+    for await (const status of translation) {
+      translationResult = status;
+      yield { status: "translate", ...status };
+    }
 
     // 将翻译结果与原始句子合并
-    const finalTranscript = mergeTranscript(transcript.text, translation);
+    const finalTranscript = mergeTranscript(transcript.text, translationResult);
     yield { status: "postprocess" };
 
     const manifest = {
@@ -39,10 +43,10 @@ export async function* fetchTranscript(episodeId: string) {
     };
 
     console.log(`Resource fetch completed for episode ${episodeId}`);
-    return { status: "completed", data: manifest };
+    yield { status: "completed", data: manifest };
   } catch (error) {
     console.error(`Error fetching transcript for episode ${episodeId}:`, error);
-    return { status: "failed", error };
+    yield { status: "failed", error };
   }
 }
 

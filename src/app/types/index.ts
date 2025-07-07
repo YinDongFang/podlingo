@@ -2,6 +2,8 @@ export interface ResourceStatus {
   status: string;
   error?: string;
   data?: Resource;
+  loaded?: number;
+  total?: number;
 }
 
 export interface Resource {

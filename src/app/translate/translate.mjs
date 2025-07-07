@@ -104,7 +104,7 @@ function parse(content) {
   }
 }
 
-export async function translate(input) {
+export async function* translate(input) {
   const statistics = new Statistics(input.length);
   const result = await continueCompletion(input, "- en");
 
@@ -115,7 +115,10 @@ export async function translate(input) {
     const count = parsedResult
       .filter((sentence) => sentence?.en)
       .reduce((count, { en }) => count + en.length + 1, -1);
-    statistics.update(Math.max(count, 0));
+    const loaded = Math.max(count, 0);
+    statistics.update(loaded);
+
+    yield { loaded, total: input.length };
 
     if (parsedResult.length > 0) {
       const latestSentence = parsedResult[parsedResult.length - 1];
@@ -129,5 +132,5 @@ export async function translate(input) {
 
   statistics.end();
 
-  return parsedResult;
+  yield parsedResult;
 }

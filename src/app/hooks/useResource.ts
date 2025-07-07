@@ -38,9 +38,9 @@ export function useResource(episodeId: string) {
     startAutoRefresh();
     return stopAutoRefresh;
   }, []);
-
+ 
   useEffect(() => {
-    if (status?.status === "completed" || status?.status !== "failed") {
+    if (status?.status === "completed" || status?.status === "failed") {
       stopAutoRefresh();
     }
   }, [status?.status]);
