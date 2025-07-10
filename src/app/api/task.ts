@@ -1,22 +1,25 @@
-import { decompress } from "@/app/utils/vendor-CxthA9A1.mjs";
-import { translate } from "@/app/translate/translate.mjs";
+import { decompress } from "../utils/vendor-CxthA9A1";
+import { translate } from "./translate";
+import logger from "../utils/logger";
 
 // 资源获取函数
 export async function* fetchTranscript(episodeId: string) {
   try {
     yield { status: "start" };
 
-    console.log(`🔁 Starting resource fetch for episode ${episodeId}`);
+    logger.help(`Starting resource fetch for episode ${episodeId}`);
     const metadata = await downloadEpisodeMetadata(episodeId);
     yield { status: "metadata" };
+    logger.info(metadata);
 
-    console.log(`🔁 Downloading transcript for episode ${episodeId}`);
+    logger.help(`Downloading transcript for episode ${episodeId}`);
     const transcriptId = metadata.transcription.id;
     const transcript = await downloadTranscript(episodeId, transcriptId);
     yield { status: "transcript" };
+    logger.info(transcript.text.map(({ word }: any) => word).join(" "));
 
-    console.log(`🔁 Translating transcript for episode ${episodeId}`);
-    const content = transcript.text.map(({ word }: any) => word).join(" ");
+    logger.help(`Translating transcript for episode ${episodeId}`);
+    const content = transcript.text.map(({ word }: any) => word);
     const translation = await translate(content);
     let translationResult: any;
     for await (const status of translation) {
@@ -37,10 +40,10 @@ export async function* fetchTranscript(episodeId: string) {
       transcript: finalTranscript,
     };
 
-    console.log(`Resource fetch completed for episode ${episodeId}`);
+    logger.help(`Resource fetch completed for episode ${episodeId}`);
     yield { status: "completed", data: manifest };
   } catch (error) {
-    console.error(`Error fetching transcript for episode ${episodeId}:`, error);
+    logger.error(`Error fetching transcript for episode ${episodeId}:`, error);
     yield { status: "failed", error };
   }
 }
